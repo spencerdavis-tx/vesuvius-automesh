@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vesuvius-automesh"
+version = "0.1.0"
+description = "Automated QC-gated surface harvest for Herculaneum scrolls (Vesuvius Challenge): CT-supported masking of public surface predictions, seed-swept villa tracing, windowed rendering with a two-part acceptance gate."
+readme = "README.md"
+license = { file = "LICENSE" }
+authors = [{ name = "Spencer Davis" }]
+requires-python = ">=3.10"
+dependencies = [
+    "numpy",
+    "scipy",
+    "zarr>=3",
+    "numcodecs",
+    "s3fs",
+    "tifffile",
+    "pillow",
+]
+
+[project.optional-dependencies]
+# Only needed for the (legacy) mesh-flattening path (batch_region/render_driver);
+# the tifxyz tracer pipeline in the README does not use it.
+mesh = ["libigl"]
+
+[tool.setuptools.packages.find]
+include = ["vesuvius_automesh*"]

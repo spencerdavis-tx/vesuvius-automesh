@@ -1,0 +1,260 @@
+{
+  "generated": "2026-06-11",
+  "data": {
+    "preds": "$DATA_DIR/cache/scroll3/preds_m7.zarr (zarr v2, levels 0-5, chunks 192^3, u8 binary 0/255, L0 shape [8398,3941,3941])",
+    "ct": "$DATA_DIR/cache/scroll3/ct.zarr (levels 2-5 local, complete: L2 16884 chunks, L4 407 chunks)",
+    "grid_note": "preds L0 == CT L2 grid, 9.596um voxels; cube analysis done at preds L2 + CT L4 (both [2100,986,986]; one 128-cube = 32^3 block)"
+  },
+  "axis_semantics": {
+    "order": "(z,y,x) = dims (0,1,2) for BOTH preds and ct; identical grids at preds L0 / CT L2",
+    "z_meaning": "dim0 = scroll (winding) axis, 8398 vox = 80.6mm; dims 1,2 = cross-section. Axial slice = spiral cross-section (see slice_L2z1056_cubez33_mid.png); coronal = tall cylinder (coronal_L2_y493.png)",
+    "ome_downsampling": "nearest (per metadata.json) -> coarse levels are unbiased samples; L0-vs-L2 calibration on 4 blocks agrees within 0.8% relative"
+  },
+  "occupancy": {
+    "preds_L2_nonzero": 282452786,
+    "preds_L2_frac": 0.13834795315622228,
+    "preds_L3_nonzero": 35356044,
+    "preds_L3_frac": 0.13854,
+    "est_L0_nonzero_total_incl_phantom": 18076978304,
+    "est_L0_nonzero_ct_supported": 5461273600,
+    "cube_grid_zyx": [
+      66,
+      31,
+      31
+    ],
+    "cubes_total": 63426,
+    "cubes_with_any_preds": 27050,
+    "cubes_ge1pct_raw": 25993,
+    "cubes_ge5pct_raw": 24524,
+    "cubes_ge1pct_ct_supported": 15281,
+    "cubes_ge5pct_ct_supported": 14271
+  },
+  "phantom_slabs": {
+    "definition": "preds>0 where CT(L2)<=5 (SAM2 mask halo ring around scroll + end caps)",
+    "global_supported_share_of_preds_pos": 0.30211208467244505,
+    "fullres_plane_phantom_frac": {
+      "2000": 0.6809910618747671,
+      "4224": 0.6717397808004598,
+      "6000": 0.6459231585175949
+    },
+    "interior_block_phantom_frac_max": 6.1e-05,
+    "cube_support_bimodal": {
+      "0.5": 10915,
+      "0.8": 11155,
+      "0.9": 11372,
+      "0.95": 11668,
+      "0.99": 12450
+    },
+    "exporter_proposal": "voxel mask preds &= (CT_L2 > 5); drop cube entirely if cube support = supported_pos/total_pos < 0.5 (bimodal: 10915 cubes ~0, ~15.9k cubes ~1.0, only ~536 between 0.5-0.95)"
+  },
+  "existing_segments": {
+    "20240711124827-20240618142020": {
+      "n_verts": 171174,
+      "bbox_preds_zyx": [
+        [
+          1874.5,
+          1127.1,
+          677.9
+        ],
+        [
+          3592.4,
+          3079.3,
+          3254.3
+        ]
+      ],
+      "n_cubes": 1177,
+      "cube_z_range": [
+        14,
+        28
+      ],
+      "cube_y_range": [
+        8,
+        24
+      ],
+      "cube_x_range": [
+        5,
+        25
+      ]
+    },
+    "20240828190516-20240716140050": {
+      "n_verts": 175558,
+      "bbox_preds_zyx": [
+        [
+          2697.5,
+          1164.7,
+          760.9
+        ],
+        [
+          4413.1,
+          3035.2,
+          3204.7
+        ]
+      ],
+      "n_cubes": 1168,
+      "cube_z_range": [
+        21,
+        34
+      ],
+      "cube_y_range": [
+        9,
+        23
+      ],
+      "cube_x_range": [
+        5,
+        25
+      ]
+    },
+    "union_n_cubes": 1853
+  },
+  "thickness_and_area": {
+    "run_length_vox": {
+      "n_runs": 16683,
+      "median_x": 4.0,
+      "median_y": 4.0,
+      "p25": 3.0,
+      "p50": 4.0,
+      "p75": 5.0,
+      "hist": {
+        "1": 203,
+        "2": 281,
+        "3": 4272,
+        "4": 6053,
+        "5": 1980,
+        "6": 920,
+        "7": 609,
+        "8": 447,
+        "9": 343,
+        "10": 240,
+        "11": 224,
+        "12": 133
+      }
+    },
+    "typical_thickness_vox": 4.0,
+    "typical_thickness_um": 38.4,
+    "potential_area_cm2_at_t4": 1257.229091359744,
+    "potential_area_cm2_range_t3_t5": [
+      1005.7832730877951,
+      1676.3054551463254
+    ]
+  },
+  "pilot_proposal": {
+    "criteria": "6^3-cube windows, all 216 cubes: CT-support>=0.95 OR empty, supported-occ 1-50%, no phantom/mixed cubes, no existing-segment cubes (dilated 1), cube-z in [10,46], outside central-swirl core (dist>=8 from cross-section boundary), visually verified off-swirl",
+    "boxes": [
+      {
+        "rank": 1,
+        "cube_origin_zyx": [
+          40,
+          17,
+          10
+        ],
+        "cube_span": [
+          6,
+          6,
+          6
+        ],
+        "voxel_box_zyx_predsL0": [
+          [
+            5120,
+            2176,
+            1280
+          ],
+          [
+            5888,
+            2944,
+            2048
+          ]
+        ],
+        "n_good_cubes": 216,
+        "supported_occ_mean": 0.175,
+        "position": "lower-left outer wraps, cleanest spacing"
+      },
+      {
+        "rank": 2,
+        "cube_origin_zyx": [
+          40,
+          11,
+          9
+        ],
+        "cube_span": [
+          6,
+          6,
+          6
+        ],
+        "voxel_box_zyx_predsL0": [
+          [
+            5120,
+            1408,
+            1152
+          ],
+          [
+            5888,
+            2176,
+            1920
+          ]
+        ],
+        "n_good_cubes": 216,
+        "supported_occ_mean": 0.156,
+        "position": "upper-left, moderate spacing"
+      },
+      {
+        "rank": 3,
+        "cube_origin_zyx": [
+          37,
+          16,
+          17
+        ],
+        "cube_span": [
+          6,
+          6,
+          6
+        ],
+        "voxel_box_zyx_predsL0": [
+          [
+            4736,
+            2048,
+            2176
+          ],
+          [
+            5504,
+            2816,
+            2944
+          ]
+        ],
+        "n_good_cubes": 216,
+        "supported_occ_mean": 0.189,
+        "position": "lower-right of center, slightly denser"
+      }
+    ],
+    "rejected": [
+      {
+        "cube_origin": [
+          20,
+          14,
+          14
+        ],
+        "reason": "sits on central swirl at that z (overlay cubez23)"
+      },
+      {
+        "cube_origin": [
+          41,
+          10,
+          15
+        ],
+        "reason": "clips swirl edge (overlay cubez43)"
+      }
+    ]
+  },
+  "mesh_vert_validation": {
+    "hit_rate_pm4vox": 0.9462616822429907
+  },
+  "renders": [
+    "slice_L2z1056_cubez33_mid.png",
+    "coronal_L2_y493.png",
+    "pilot_v2_overlay_cubez40.png",
+    "pilot_v2_overlay_cubez43.png",
+    "pilot_v2_overlay_cubez23.png",
+    "slice_L2z144_cubez4.png",
+    "slice_L2z2064_cubez64.png",
+    "pilot_overlay_L2z1296_cubez40.png"
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "mode": "seed",
+  "step_size": 20,
+  "min_area_cm": 0.2,
+  "generations": 200,
+  "thread_limit": 0,
+  "cache_size": 8000000000,
+  "cache_root": "$DATA_DIR/automesh/scroll3/vc_cache_v3",
+  "use_cuda": false,
+  "normal_grid_path": "$DATA_DIR/automesh/scroll3/normal_grids_supported",
+  "normal_grid_level": 0
+}
