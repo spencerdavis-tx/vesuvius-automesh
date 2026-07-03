@@ -53,7 +53,7 @@ m7 preds zarr ──► CT-support masking ──► normal grids ──► seed
 Requires Python ≥ 3.10. With [uv](https://docs.astral.sh/uv/):
 
 ```bash
-git clone <REPO_URL_PLACEHOLDER>
+git clone https://github.com/spencerdavis-tx/vesuvius-automesh
 cd vesuvius-automesh
 uv venv && source .venv/bin/activate
 uv pip install -e .
