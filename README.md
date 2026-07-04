@@ -13,7 +13,7 @@ Two parts are useful independently of the area number:
 1. **Bug report — phantom positives in the public m7 surface predictions for
    Scroll 3:** ~70% of positive voxels sit where the SAM2-masked CT volume is
    exactly 0 (a halo ring + end caps). Details, measured numbers, and a 10-line
-   reproduction in [WRITEUP.md §4](WRITEUP.md). The fix used here:
+   reproduction in [TECHNICAL_NOTES.md §4](TECHNICAL_NOTES.md). The fix used here:
    `supported = preds & (CT > 5)` at the source (`build_supported_preds`).
 
    ![phantom halo](figures/phantom_halo_slice_L2z1056.png)
@@ -21,7 +21,7 @@ Two parts are useful independently of the area number:
 2. **A two-part per-window acceptance gate** (4 calibrated texture/geometry gates
    + recenter `found_fraction ≥ 0.9`) that catches locally-coherent renders of
    scroll *cross-sections* — a failure mode the texture gates alone provably miss.
-   Calibration numbers in [WRITEUP.md §5](WRITEUP.md).
+   Calibration numbers in [TECHNICAL_NOTES.md §5](TECHNICAL_NOTES.md).
 
 ## Pipeline
 
