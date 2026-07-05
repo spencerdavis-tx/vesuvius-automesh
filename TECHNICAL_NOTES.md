@@ -234,10 +234,10 @@ core; the binding render cost was CT-L1 S3 latency, fixed by prefetching only
    re-render at L0.
 2. **30% of rendered area is rejected** (wandering windows). Recoverable in principle
    with fiber-direction fields / consensus tracing (organizer techniques we did not use).
-3. **found_fraction ≥ 0.9 is calibrated, not control-validated — and saturates on
-   zero-gap fused terrain** (2026-07-05 update: on dense fused wraps the recenter probe finds
-   *a* sheet nearly everywhere; medians >0.99 even on topology-failing windows; add a
-   winding-consistency check there — see WRITEUP update note).** Calibration is against
+3. **found_fraction ≥ 0.9 is calibrated, not control-validated — and it saturates on
+   zero-gap fused terrain.** On dense fused wraps the recenter probe finds *a* sheet nearly
+   everywhere (medians >0.99 even on windows that topology checks reject), so on such terrain
+   it is necessary but not sufficient; add a winding-consistency check. Calibration is against
    human-traced Scroll 3 renders; it has not been validated on a scroll with confirmed
    ink. Treat accepted area as *renderable surface*, not ink-ready surface.
 4. **Two of 17 patches yielded 0 cm²** — seed/terrain dependent; not retried.

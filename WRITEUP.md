@@ -70,16 +70,12 @@ The renders are 4.8 µm — good enough to judge surface quality, not what you'd
 model (2.4 µm re-renders of the accepted windows are in progress). Thirty percent of the
 rendered area failed the gate and was thrown away; some of that is probably recoverable with
 the team's fiber-direction techniques. The gate calibration comes from Scroll 3's own
-human-traced segments, not from a known-ink control.
-
-**Update (2026-07-05):** further testing on denser, zero-gap terrain (tightly fused wraps)
-found a real failure mode of the `found_fraction` gate: where wraps touch with no air gap,
-the recenter probe can lock onto *some* sheet almost everywhere, and the gate saturates —
-we measured medians above 0.99 even on windows that independent topology checks showed were
-crossing between wraps. On terrain like Scroll 3's (calibrated populations well-separated) it
-works as described; on fused terrain, treat it as necessary but not sufficient, and add a
-topology check (e.g., winding-consistency of the traced surface) before trusting accepted
-area. A v2 gate spec is in progress and will be published with a follow-up report.
+human-traced segments, not from a known-ink control. One scope limit worth knowing before
+you point this at other scrolls: the surface-lock test assumes wraps are separated by air
+gaps, as they mostly are on Scroll 3. On zero-gap *fused* terrain the recenter probe can
+lock onto *some* sheet almost everywhere and the gate saturates (medians above 0.99 even on
+windows that independent topology checks reject) — there, treat it as necessary but not
+sufficient and add a topology check such as winding-consistency of the traced surface.
 
 And to be completely clear: **there are no ink claims here.** This is renderable surface,
 nothing more.
