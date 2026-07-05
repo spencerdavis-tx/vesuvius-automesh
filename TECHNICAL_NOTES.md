@@ -4,8 +4,9 @@
 
 We built a fully automated chain — organizer surface-prediction zarr → CT-support masking →
 `vc_grow_seg_from_seed` tracing → per-window 66-layer rendering → two-part quantitative
-acceptance — that produced **409.3 cm² of QC-passing rendered surface on Scroll 3
-(PHerc0332)**, about **6.1× the ~67 cm² of existing human-traced segments**, with **zero
+acceptance plus independent topology verification — that produced **279.4 cm² of verified
+rendered surface on Scroll 3 (PHerc0332)**, about **4.2× the ~67 cm² of existing
+human-traced segments**, with **zero
 manual annotation clicks and zero GPU spend** (Apple-silicon Mac CPU + anonymous S3
 streaming only).
 
@@ -79,11 +80,12 @@ cannot poison an accepted window.
 |---|---|
 | Traced patches | 17 |
 | Windows rendered (25 mm) | 157 |
-| Windows accepted | 106 (68%) |
+| Windows passing render-QC gate | 106 (68%) |
+| Windows passing topology verification | 61 |
 | Masked area rendered | 586.7 cm² |
-| **Area accepted** | **409.3 cm²** |
+| **Area verified (both tiers)** | **279.4 cm²** |
 | Area yield | 70% |
-| Prior human-traced baseline | ~67 cm² (6.1×) |
+| Prior human-traced baseline | ~67 cm² (4.2×) |
 | Median recenter found_fraction, passing windows | 0.989 |
 | GPU spend | $0 |
 | Manual annotation | 0 clicks |
@@ -188,7 +190,12 @@ step locks onto a sheet-center within its search band. Calibration on this corpu
 - Threshold 0.9 sits in a wide empty margin; passing windows median 0.989.
 
 We report `qc_gates_pass` and the found-fraction separately in every `qc.json` for
-honesty; a window is accepted only on both. Caveat: this calibration is on Scroll 3
+honesty; a window is gate-accepted only on both — and gate-accepted windows then face an
+independent topology verification tier before they count: (i) winding-consistency of the
+traced surface coordinates (angular march around the scroll must not backtrack beyond 10°),
+(ii) support density against the surface-prediction volume, and (iii) window-level surface
+scoring (coverage@50 µm ≥ 0.80, mean surface distance ≤ 30 µm) against the CT-supported
+predictions. 61 of 106 gate-accepted windows verify; only those 279.4 cm² are claimed. Caveat: this calibration is on Scroll 3
 against our own human-render references; it has not been validated on a known-ink control
 scroll (see Limitations).
 
@@ -251,7 +258,7 @@ core; the binding render cost was CT-L1 S3 latency, fixed by prefetching only
 
 - **Scroll 2 (PHercParis3):** the pipeline is scroll-agnostic (config already wired);
   it needs only a surface-preds zarr for Scroll 2.
-- **Ink screening on Scroll 3:** 409 cm² of QC'd surface is ~6× more substrate for any
+- **Ink screening on Scroll 3:** 279 cm² of verified surface is ~4× more substrate for any
   ink model than previously existed; re-render accepted windows at 2.4 µm first.
 - **Geometry benchmarking:** the per-window QC records (gate values + recenter histograms
   for 157 windows, pass and fail) are a ready-made labeled set for anyone studying tracer

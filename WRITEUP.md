@@ -1,4 +1,4 @@
-# 409 cm² of Scroll 3 surface, hands-free
+# 279 cm² of verified Scroll 3 surface, hands-free
 
 *Spencer Davis — July 2026*
 
@@ -10,9 +10,11 @@ So I wanted to know: using only what's already public — the team's Scroll 3 su
 predictions, their tracer, their render conventions — how much usable surface can you
 harvest with **zero** human tracing?
 
-The answer turned out to be **409 cm² of QC-passing rendered surface**, about 6× the
-human-traced segments currently on the data server for Scroll 3, produced on a Mac CPU
-streaming the CT from S3. No GPU, no annotation clicks.
+The answer turned out to be **279 cm² of verified rendered surface** — roughly 4× the
+human-traced segments currently on the data server for Scroll 3 — produced on a Mac CPU
+streaming the CT from S3. No GPU, no annotation clicks. "Verified" means each window passed
+both a render-quality gate and an independent topology check; the pipeline renders
+substantially more than that, and the gates decide what counts.
 
 ![accepted window — clean fiber weave](figures/render_preview_patch715_w0256_0128.png)
 
@@ -27,9 +29,11 @@ manual annotation again. Instead: sweep many seeds, let every trace run, render 
 in 25 mm windows, and let a quality gate decide window by window what survives. A wandering
 trace wastes some compute, but it can't sneak a bad window past the gate.
 
-From 17 traces: 157 windows rendered, 106 accepted. Seven traces in clean outer-wrap
-territory did most of the work; two wandered completely and contributed nothing. That
-failure rate is fine — the gate is what makes the number honest, not the tracer.
+From 17 traces: 157 windows rendered, 106 passed the render-quality gate, and 61 of those
+(279 cm²) passed the independent topology verification described below. Seven traces in
+clean outer-wrap territory did most of the work; two wandered completely and contributed
+nothing. That attrition is fine — the gates are what make the number honest, not the
+tracer.
 
 ## The bug I hit on the way (please read this if you use the public predictions)
 
@@ -58,24 +62,30 @@ render of a scroll **cross-section** — surface cutting straight across the wra
 plainly visible, obviously garbage — and it *passed all four gates*. Fiber texture is
 locally coherent even when the geometry is completely wrong.
 
-The fix is a surface-lock test: during rendering, each probe tries to re-center onto a sheet
-along its normal, and I track what fraction succeeds. Real surfaces score 0.97–1.00.
-Wandering or cross-cutting traces score 0.36–0.54. The threshold (0.9) sits in the empty
-middle, and passing windows land at a median of 0.989. Every window ships with its own
-`qc.json`, so you can audit any of this instead of taking my word for it.
+The first fix is a surface-lock test: during rendering, each probe tries to re-center onto
+a sheet along its normal, and I track what fraction succeeds. Real surfaces score 0.97–1.00;
+wandering or cross-cutting traces score 0.36–0.54; the threshold (0.9) sits in the empty
+middle.
+
+Surface-lock has its own scope limit, though: it assumes wraps are separated by air gaps. On
+zero-gap *fused* terrain the probe can lock onto *some* sheet almost everywhere and the test
+saturates. So accepted windows get a second, independent pass with topology instruments that
+don't care about texture at all: winding-consistency of the traced surface (a real page
+marches monotonically around the scroll; a wrap-hopper backtracks), agreement with the
+surface-prediction volume where it has support, and window-level surface-distance scoring.
+Only windows that pass both tiers count toward the headline — 61 of the 106
+gate-accepted windows here. Every window ships with its own `qc.json` and topology verdict,
+so you can audit any of this instead of taking my word for it.
 
 ## Caveats, honestly
 
 The renders are 4.8 µm — good enough to judge surface quality, not what you'd feed an ink
-model (2.4 µm re-renders of the accepted windows are in progress). Thirty percent of the
-rendered area failed the gate and was thrown away; some of that is probably recoverable with
-the team's fiber-direction techniques. The gate calibration comes from Scroll 3's own
-human-traced segments, not from a known-ink control. One scope limit worth knowing before
-you point this at other scrolls: the surface-lock test assumes wraps are separated by air
-gaps, as they mostly are on Scroll 3. On zero-gap *fused* terrain the recenter probe can
-lock onto *some* sheet almost everywhere and the gate saturates (medians above 0.99 even on
-windows that independent topology checks reject) — there, treat it as necessary but not
-sufficient and add a topology check such as winding-consistency of the traced surface.
+model (2.4 µm re-renders of the verified windows are in progress). A little over half of the
+rendered area fails one gate or the other and is excluded from the count; some of that is
+probably recoverable with the team's fiber-direction techniques. The gate calibration comes from Scroll 3's own
+human-traced segments, not from a known-ink control. And the two-tier design matters more,
+not less, on other scrolls: the denser and more fused the terrain, the more the topology
+tier does the real work — on such terrain, texture and surface-lock alone will over-accept.
 
 And to be completely clear: **there are no ink claims here.** This is renderable surface,
 nothing more.
