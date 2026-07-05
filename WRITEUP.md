@@ -79,8 +79,10 @@ we measured medians above 0.99 even on windows that independent topology checks 
 crossing between wraps. On terrain like Scroll 3's (calibrated populations well-separated) it
 works as described; on fused terrain, treat it as necessary but not sufficient, and add a
 topology check (e.g., winding-consistency of the traced surface) before trusting accepted
-area. A v2 gate spec is in progress and will be published with a follow-up report. And to be completely clear: **there are
-no ink claims here.** This is renderable surface, nothing more.
+area. A v2 gate spec is in progress and will be published with a follow-up report.
+
+And to be completely clear: **there are no ink claims here.** This is renderable surface,
+nothing more.
 
 ## If you want to build on it
 
