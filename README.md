@@ -2,13 +2,43 @@
 
 Automated, QC-gated surface harvest for Herculaneum scrolls (Vesuvius Challenge).
 
-On Scroll 3 (PHerc0332) this pipeline produced **279.4 cm² of independently verified
-rendered papyrus surface** (409.3 cm² passed render-QC; 61 of 106 accepted windows —
-68% of accepted area — additionally passed an independent topology-consistency check,
-and only that verified area is claimed) — **~4× the existing human-traced segments** —
-with **zero manual annotation and zero GPU**, on a single Apple-silicon Mac streaming
-CT anonymously from S3. Full engineering writeup with numbers, calibration, and
-limitations: [WRITEUP.md](WRITEUP.md); per-window QC records: [`qc/`](qc/).
+**Where its output overlaps papyrus that humans already traced, this pipeline re-finds the
+human-traced surface to within about one sheet thickness.** Our seed sweep deliberately
+avoided the two human-traced Scroll 3 segments, but traces free-grow — and 9 of our 61
+verified windows grew onto the same papyrus. The best-overlapped windows track the human
+surface at a **median 28–41 µm** (papyrus sheet thickness ≈ 40 µm; the neighboring wrap is
+300+ µm away). That is agreement with human ground truth, not just with model predictions —
+see [the same-papyrus comparison](#same-papyrus-validated-against-human-tracing) below.
+
+In total: **279.4 cm² of independently verified rendered papyrus surface** (409.3 cm² passed
+render-QC; 61 of 106 accepted windows — 68% of accepted area — additionally passed an
+independent topology-consistency check, and only that verified area is claimed) —
+**~4× the existing human-traced segments** — with **zero manual annotation and zero GPU**,
+on a single Apple-silicon Mac streaming CT anonymously from S3. Full engineering writeup:
+[WRITEUP.md](WRITEUP.md); per-window QC records: [`qc/`](qc/).
+
+## Same papyrus, validated against human tracing
+
+The same 6 mm of Scroll 3, seen by the human-traced segment (`20240618142020`) and by one of
+our verified windows. To compare the two geometries without either pipeline's flattening in
+the way, the CT volume is sampled identically on both surfaces, on the same grid — so any
+texture difference is purely geometry. In the checkerboard, cracks and fiber weave continue
+seamlessly across tiles:
+
+![same papyrus: human-traced vs ours, CT-referee comparison](figures/same_papyrus_3d_referee.png)
+
+And the two *finished renders* of the same region, each in its own pipeline's flattening
+(ours rigidly rotated to match orientation; the flattenings distort differently, so
+correspondence here is loose by construction):
+
+![same papyrus: both finished renders](figures/same_papyrus_finished_renders.png)
+
+Numbers, per overlapping window (`qc/overlap_distance_stats.json`; distances are
+nearest-point distances from window vertices to the human mesh, mapped across scans with the
+organizers' published old→new transform): 4 windows with the largest overlap track the human
+surface at 28–41 µm median; the other 5 sit at 140–200 µm, which we do **not** claim either
+way — that is within the uncertainty of the single global affine registering the old scan
+(where the human meshes live) to the new 2.4 µm scan.
 
 ## What the verified surface looks like
 
@@ -176,8 +206,8 @@ window, 48 threads).
 | `config/level_ledger.json` | measured volume/level metadata + S3 prefixes |
 | `tracer/params_seed_v3.json` | the tracer params used for the harvest |
 | `survey/` | 2026-06-11 preds survey artifacts (cube maps + phantom numbers) |
-| `figures/` | phantom-halo overlay + accepted/rejected render examples |
-| `qc/` | per-window QC records for all 157 rendered windows (passes and failures) |
+| `figures/` | phantom-halo overlay, accepted/rejected render examples, same-papyrus comparisons |
+| `qc/` | per-window QC records for all 157 windows + human-overlap distance stats |
 
 ## Environment variables
 
