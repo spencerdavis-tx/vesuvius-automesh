@@ -5,7 +5,7 @@
 We built a fully automated chain — organizer surface-prediction zarr → CT-support masking →
 `vc_grow_seg_from_seed` tracing → per-window 66-layer rendering → two-part quantitative
 acceptance plus independent topology verification — that produced **279.4 cm² of verified
-rendered surface on Scroll 3 (PHerc0332)**, about **4.2× the ~67 cm² of existing
+rendered surface on Scroll 3 (PHerc0332)**, about **4.1× the ~67.7 cm² of existing
 human-traced segments**, with **zero
 manual annotation clicks and zero GPU spend** (Apple-silicon Mac CPU + anonymous S3
 streaming only).
@@ -85,7 +85,7 @@ cannot poison an accepted window.
 | Masked area rendered | 586.7 cm² |
 | **Area verified (both tiers)** | **279.4 cm²** |
 | Area yield | 70% |
-| Prior human-traced baseline | ~67 cm² (4.2×) |
+| Prior human-traced baseline | ~67.7 cm² (4.1×) |
 | Median recenter found_fraction, passing windows | 0.989 |
 | GPU spend | $0 |
 | Manual annotation | 0 clicks |

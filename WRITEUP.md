@@ -80,7 +80,7 @@ so you can audit any of this instead of taking my word for it.
 ## Caveats, honestly
 
 The renders are 4.8 µm — good enough to judge surface quality, not what you'd feed an ink
-model (2.4 µm re-renders of the verified windows are in progress). A little over half of the
+model (the verified windows can be re-rendered at 2.4 µm from the same tifxyz). A little over half of the
 rendered area fails one gate or the other and is excluded from the count; some of that is
 probably recoverable with the team's fiber-direction techniques. The gate calibration comes from Scroll 3's own
 human-traced segments, not from a known-ink control. And the two-tier design matters more,
