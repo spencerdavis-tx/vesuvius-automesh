@@ -10,20 +10,36 @@ with **zero manual annotation and zero GPU**, on a single Apple-silicon Mac stre
 CT anonymously from S3. Full engineering writeup with numbers, calibration, and
 limitations: [WRITEUP.md](WRITEUP.md); per-window QC records: [`qc/`](qc/).
 
-Two parts are useful independently of the area number:
+## What the verified surface looks like
 
-1. **Bug report — phantom positives in the public m7 surface predictions for
-   Scroll 3:** ~70% of positive voxels sit where the SAM2-masked CT volume is
-   exactly 0 (a halo ring + end caps). Details, measured numbers, and a 10-line
-   reproduction in [TECHNICAL_NOTES.md §4](TECHNICAL_NOTES.md). The fix used here:
-   `supported = preds & (CT > 5)` at the source (`build_supported_preds`).
+Continuous cross-hatched papyrus fiber weave — the perpendicular plant-fiber layers of a
+real page, with a consistent grain. The black squiggles are cracks and losses (this is
+2,000-year-old carbonized papyrus); the bright specks are dense mineral inclusions.
 
-   ![phantom halo](figures/phantom_halo_slice_L2z1056.png)
+![accepted render: continuous papyrus fiber weave](figures/qc_accepted_weave.jpg)
 
-2. **A two-part per-window acceptance gate** (4 calibrated texture/geometry gates
-   + recenter `found_fraction ≥ 0.9`) that catches locally-coherent renders of
-   scroll *cross-sections* — a failure mode the texture gates alone provably miss.
-   Calibration numbers in [TECHNICAL_NOTES.md §5](TECHNICAL_NOTES.md).
+Two more verified windows, with their audit numbers (every accepted window ships a
+`qc.json`; all 157 windows — passes and failures — are compiled in [`qc/`](qc/)):
+
+| ![verified window, patch 715](figures/render_preview_patch715_w0256_0128.png) | ![verified window, patch 589](figures/render_preview_patch589_w0129_0258.png) |
+|---|---|
+| 6.23 cm², found_fraction 0.989; topology re-gate VERIFIED (cov@50 µm 0.84, mean surface distance 24.1 µm) | 6.22 cm², found_fraction 0.996; topology re-gate VERIFIED (cov@50 µm 0.86, mean surface distance 22.3 µm) |
+
+## What the gate throws out
+
+The tracer, left alone, wanders — so the honesty of the headline number lives in the
+rejections. The four failure modes, as the gate sees them:
+
+| ![rejected: cross-section](figures/qc_reject_crosscut.jpg) | ![rejected: off-sheet air](figures/qc_reject_offsheet.jpg) |
+|---|---|
+| **The impostor: a surface cut across the roll.** Fiber-like texture, and it **passed all four texture gates** (from an early smoke test) — but the sweeping concentric bands are the scroll's wrap spiral, not a page. This failure is why the gate is two-part: the surface-lock test scores it 0.36–0.54 vs ≥ 0.9 for real pages. | **Drifted off the sheet: rendering air.** The trace left the papyrus entirely, so the renderer sampled empty space — no weave, no bright sheet-normal intensity band. Fails the band-contrast gate (and surface-lock). |
+| ![rejected: wrong texture](figures/qc_reject_texture.jpg) | ![rejected: ragged edge](figures/qc_reject_ragged.jpg) |
+| **Wrong texture: statistically not a page.** Material is present, but the weave is muddled and directionless — the signature of a surface skimming along papyrus without locking onto one face. Fails the coherence gate (calibrated against human-traced renders). | **Ragged edge: not enough page in the frame.** The texture that exists is genuinely fine — this is a 25 mm window hanging off the end of a trace, only ~56% on claimed surface vs the 60% floor. Rejecting it keeps the area ledger honest. |
+
+Gate definitions and calibration numbers: [TECHNICAL_NOTES.md §5](TECHNICAL_NOTES.md).
+Windows that clear all of this then face an **independent topology tier** (winding
+consistency, prediction-support density, window-level surface scoring) — 61 of 106
+gate-accepted windows survive it, and only those 279.4 cm² are claimed.
 
 ## Pipeline
 
@@ -49,6 +65,18 @@ m7 preds zarr ──► CT-support masking ──► normal grids ──► seed
    render pitch, derive normals from grid derivatives, recenter, 66-layer render
    in villa layout (`<id>/layers/00..65.tif` + mask + `meta.json` + `qc.json`),
    accepted per 25 mm window under the two-part gate, with a cumulative ledger.
+
+## Why step 1 exists: phantom positives in the public predictions
+
+If you consume the public Scroll 3 m7 surface predictions, read this before anything
+else touches them: **~70% of the positive voxels sit where the SAM2-masked CT volume is
+exactly 0** — a solid halo ring around the scroll plus end caps. The tracer is CT-blind
+and happily rides those phantom shells. The one-line fix used here:
+`supported = preds & (CT > 5)` at the source (`build_supported_preds`). Measured numbers
+and a 10-line reproduction: [TECHNICAL_NOTES.md §4](TECHNICAL_NOTES.md), filed upstream
+as [ScrollPrize/villa#1114](https://github.com/ScrollPrize/villa/issues/1114).
+
+![phantom halo](figures/phantom_halo_slice_L2z1056.png)
 
 ## Install
 
@@ -148,7 +176,8 @@ window, 48 threads).
 | `config/level_ledger.json` | measured volume/level metadata + S3 prefixes |
 | `tracer/params_seed_v3.json` | the tracer params used for the harvest |
 | `survey/` | 2026-06-11 preds survey artifacts (cube maps + phantom numbers) |
-| `figures/` | phantom-halo overlay + example accepted windows |
+| `figures/` | phantom-halo overlay + accepted/rejected render examples |
+| `qc/` | per-window QC records for all 157 rendered windows (passes and failures) |
 
 ## Environment variables
 
