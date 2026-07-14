@@ -2,11 +2,13 @@
 
 Automated, QC-gated surface harvest for Herculaneum scrolls (Vesuvius Challenge).
 
-On Scroll 3 (PHerc0332) this pipeline produced **409.3 cm² of QC-passing rendered
-papyrus surface** — ~6.1× the existing human-traced segments — with **zero manual
-annotation and zero GPU**, on a single Apple-silicon Mac streaming CT anonymously
-from S3. Full engineering writeup with numbers, calibration, and limitations:
-[WRITEUP.md](WRITEUP.md).
+On Scroll 3 (PHerc0332) this pipeline produced **279.4 cm² of independently verified
+rendered papyrus surface** (409.3 cm² passed render-QC; 61 of 106 accepted windows —
+68% of accepted area — additionally passed an independent topology-consistency check,
+and only that verified area is claimed) — **~4× the existing human-traced segments** —
+with **zero manual annotation and zero GPU**, on a single Apple-silicon Mac streaming
+CT anonymously from S3. Full engineering writeup with numbers, calibration, and
+limitations: [WRITEUP.md](WRITEUP.md); per-window QC records: [`qc/`](qc/).
 
 Two parts are useful independently of the area number:
 
